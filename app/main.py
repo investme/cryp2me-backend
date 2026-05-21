@@ -1,10 +1,12 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import logging
 
 from app.config import settings
 from app.routers import chart_router, search_router, predict_router
+from app.routers.backtest import router as backtest_router
 from app.state import engine
 
 logging.basicConfig(level=settings.log_level.upper())
@@ -40,7 +42,8 @@ app.add_middleware(
 
 app.include_router(chart_router,   prefix="/api")
 app.include_router(search_router,  prefix="/api")
-app.include_router(predict_router, prefix="/api")
+app.include_router(predict_router,  prefix="/api")
+app.include_router(backtest_router, prefix="/api")
 
 
 @app.get("/api/health")
@@ -51,6 +54,11 @@ async def health():
         "models_loaded": engine.loaded,
     }
 
+
+
+
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn

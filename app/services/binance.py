@@ -40,6 +40,8 @@ KNOWN_NAMES = {
     "DAI": "Dai", "USDC": "USD Coin", "NEAR": "NEAR Protocol", "OP": "Optimism",
     "ARB": "Arbitrum", "PEPE": "Pepe", "FIL": "Filecoin", "INJ": "Injective",
     "SUI": "Sui", "APT": "Aptos", "IMX": "ImmutableX",
+    "PAXG": "Pax Gold",
+    "XAUT": "Tether Gold",
 }
 
 # ── Fetch Candles ─────────────────────────────────────────────────────────────

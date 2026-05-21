@@ -7,6 +7,7 @@ router = APIRouter(prefix="/search", tags=["search"])
 
 # Top 100 tokens - will be enriched from Binance exchange info at startup
 TOP_TICKERS = [
+    "PAXG", "XAUT",  # Tokenized Gold
     "BTC", "ETH", "BNB", "SOL", "XRP", "ADA", "DOGE", "AVAX", "LINK", "DOT",
     "MATIC", "UNI", "ATOM", "LTC", "SHIB", "TRX", "DAI", "NEAR", "OP", "ARB",
     "PEPE", "FIL", "INJ", "SUI", "APT", "IMX", "AAVE", "MKR", "SNX", "CRV",
