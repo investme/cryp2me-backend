@@ -8,10 +8,8 @@ add_*.py
 patch_*.py
 *-dashboard*.html
 *.zip
-predict_v51.py
-backtest_router.py
-backtester.py
-stat_signals.py
 templates/
 models/onnx/
 models/checkpoints/
+EOF
+echo "gitignore cleanded"
