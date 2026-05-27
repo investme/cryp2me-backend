@@ -434,12 +434,12 @@ let fibMode = false;
 
 // ── Timeframe → horizon mapping ────────────────────────────────
 const TF_HORIZONS = {
-  '1m':  { labels:['T+24h', 'T+48h', 'T+72h'], desc:'1H Model — T+24h / T+48h / T+72h' },
-  '5m':  { labels:['T+24h', 'T+48h', 'T+72h'], desc:'1H Model — T+24h / T+48h / T+72h' },
-  '15m': { labels:['T+24h', 'T+48h', 'T+72h'], desc:'1H Model — T+24h / T+48h / T+72h' },
+  '1m':  { labels:['T+5m',  'T+15m', 'T+30m'], desc:'1M Scalping — T+5m / T+15m / T+30m' },
+  '5m':  { labels:['T+15m', 'T+1h',  'T+4h'],  desc:'5M Intraday — T+15m / T+1h / T+4h' },
+  '15m': { labels:['T+1h',  'T+4h',  'T+8h'],  desc:'15M Short-term — T+1h / T+4h / T+8h' },
   '1h':  { labels:['T+24h', 'T+48h', 'T+72h'], desc:'1H — T+24h / T+48h / T+72h' },
-  '2h':  { labels:['T+24h', 'T+48h', 'T+72h'], desc:'1H Model — T+24h / T+48h / T+72h' },
-  '1d':  { labels:['T+24h', 'T+48h', 'T+72h'], desc:'1H Model — T+24h / T+48h / T+72h' },
+  '2h':  { labels:['T+48h', 'T+96h', 'T+6d'],  desc:'2H Swing — T+48h / T+96h / T+6d' },
+  '1d':  { labels:['T+3d',  'T+7d',  'T+14d'], desc:'1D Macro — T+3d / T+7d / T+14d' },
 };
 
 const ASSET_NAMES = {
