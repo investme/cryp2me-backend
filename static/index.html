@@ -83,6 +83,16 @@ body { font-family:var(--sans); background:var(--bg); color:var(--text); height:
 .tf-btn { padding:4px 9px; border:1px solid var(--border); background:transparent; color:var(--muted); font-family:var(--mono); font-size:10px; border-radius:4px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
 .tf-btn:hover { border-color:var(--accent); color:var(--accent); }
 .tf-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.tf-btn.locked { opacity:0.45; cursor:not-allowed; position:relative; }
+.tf-btn.locked:hover { border-color:var(--border); color:var(--muted); }
+.asset-item.locked { opacity:0.5; cursor:not-allowed; }
+.asset-item.locked:hover { background:transparent; }
+.lock-badge { font-size:9px; margin-left:3px; }
+.pro-pill { display:inline-block; background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; font-family:var(--mono); font-size:8px; font-weight:700; padding:2px 6px; border-radius:4px; letter-spacing:0.5px; vertical-align:middle; }
+.upsell-bar { display:none; position:fixed; bottom:0; left:0; right:0; z-index:500; background:linear-gradient(135deg,var(--accent),var(--accent2,#7c3aed)); color:#fff; padding:14px 24px; text-align:center; font-family:var(--mono); font-size:13px; box-shadow:0 -4px 24px rgba(0,0,0,0.3); }
+.upsell-bar.show { display:flex; align-items:center; justify-content:center; gap:16px; }
+.upsell-bar a { background:#fff; color:var(--accent); padding:8px 20px; border-radius:6px; text-decoration:none; font-weight:700; font-size:12px; }
+
 .tool-btn { padding:4px 8px; border:1px solid var(--border); background:transparent; color:var(--muted); font-size:10px; font-family:var(--mono); border-radius:4px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
 .tool-btn.on { background:rgba(59,130,246,0.15); border-color:var(--accent); color:var(--accent); }
 .tool-btn.study { background:rgba(139,92,246,0.1); border-color:rgba(139,92,246,0.3); color:#a78bfa; }
@@ -376,6 +386,39 @@ body.trendline-mode .trendline-hint { display:block; }
 const BASE = '/api';
 let currentTicker = 'BTC';
 let currentTf = '1h';
+
+// ═══════════ PRO GATING ═══════════
+const FREE_TICKERS = ['BTC','ETH','SOL'];
+const FREE_TIMEFRAMES = ['1h','1d'];
+function isPro() {
+  try {
+    const pro = localStorage.getItem('cryp2me_pro');
+    const until = parseInt(localStorage.getItem('cryp2me_pro_until') || '0');
+    return pro === 'true' && Date.now() < until;
+  } catch(e) { return false; }
+}
+function tickerAllowed(t) { return isPro() || FREE_TICKERS.includes(t); }
+function tfAllowed(tf)    { return isPro() || FREE_TIMEFRAMES.includes(tf); }
+function showUpsell(msg) {
+  const bar = document.getElementById('upsell-bar');
+  document.getElementById('upsell-text').textContent = msg || '🔒 This is a Pro feature';
+  bar.classList.add('show');
+  clearTimeout(window._upsellTimer);
+  window._upsellTimer = setTimeout(() => bar.classList.remove('show'), 5000);
+}
+function applyTfLocks() {
+  document.querySelectorAll('.tf-btn').forEach(btn => {
+    const tf = btn.dataset.tf;
+    if (tfAllowed(tf)) { btn.classList.remove('locked'); btn.querySelector('.lock-badge')?.remove(); }
+    else if (!btn.querySelector('.lock-badge')) {
+      btn.classList.add('locked');
+      const lock = document.createElement('span');
+      lock.className = 'lock-badge'; lock.textContent = '🔒';
+      btn.appendChild(lock);
+    }
+  });
+}
+// ══════════════════════════════════
 let mainChart, rsiChart, macdChart;
 let candleSeries, ema10S, ema20S, ema34S, rsiS, macdS, sigS, histS;
 let priceCache = {};
@@ -659,7 +702,13 @@ function buildSidebar(filter='') {
         </div>
         <div class="asset-price ${gold ? 'gold-price' : ''}">${price ? fmtPrice(price) : '—'}</div>
       `;
-      div.onclick = () => selectTicker(ticker);
+      if (!tickerAllowed(ticker)) {
+        div.classList.add('locked');
+        div.querySelector('.asset-sym').innerHTML += ' <span class="lock-badge">🔒</span>';
+        div.onclick = () => showUpsell('🔒 ' + ticker + ' is a Pro asset — upgrade for all 31 assets');
+      } else {
+        div.onclick = () => selectTicker(ticker);
+      }
       list.appendChild(div);
     });
   };
@@ -885,9 +934,14 @@ async function refreshPrediction(tf) {
 // ── Timeframe buttons ──────────────────────────────────────────
 document.querySelectorAll('.tf-btn').forEach(btn => {
   btn.onclick = function() {
+    const tf = this.dataset.tf;
+    if (!tfAllowed(tf)) {
+      showUpsell('🔒 ' + tf.toUpperCase() + ' timeframe is Pro — free includes 1H & 1D');
+      return;
+    }
     document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
     this.classList.add('active');
-    currentTf = this.dataset.tf;
+    currentTf = tf;
     updateTfContext(currentTf);
     resetPredPanel();
     loadChart();
@@ -899,9 +953,21 @@ document.querySelectorAll('.tf-btn').forEach(btn => {
 window.onload = async () => {
   initCharts();
   buildSidebar();
+  applyTfLocks();
+  if (isPro()) {
+    const badge = document.createElement('span');
+    badge.className = 'pro-pill'; badge.textContent = 'PRO';
+    badge.style.marginLeft = '8px';
+    document.querySelector('.ticker-info h2')?.appendChild(badge);
+  }
   await selectTicker('BTC');
   setInterval(loadChart, 60000);
 };
 </script>
+
+<div class="upsell-bar" id="upsell-bar">
+  <span id="upsell-text">🔒 This is a Pro feature</span>
+  <a href="https://cryp2me.ai/#pricing" target="_blank">Upgrade to Pro →</a>
+</div>
 </body>
 </html>
