@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal & Contact — cryp2me.ai</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root[data-theme="dark"] {
+  --bg:#05080f; --bg2:#080d18; --surface:#0d1525; --surface2:#111c30;
+  --border:rgba(255,255,255,0.08); --text:#e8edf5; --text-soft:#94a3b8; --muted:#64748b;
+}
+:root[data-theme="light"] {
+  --bg:#f7f9fc; --bg2:#ffffff; --surface:#ffffff; --surface2:#f1f5fb;
+  --border:rgba(15,23,42,0.10); --text:#0f172a; --text-soft:#475569; --muted:#64748b;
+}
+:root {
+  --bull:#00b87a; --accent:#2563eb; --gold:#f59e0b;
+  --mono:'JetBrains Mono',monospace; --display:'Bebas Neue',sans-serif; --body:'DM Sans',sans-serif;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--body); background:var(--bg); color:var(--text); line-height:1.7; transition:background 0.3s,color 0.3s; }
+
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px; height:64px; background:var(--bg2);
+  backdrop-filter:blur(20px); border-bottom:1px solid var(--border);
+}
+.nav-logo { font-family:var(--mono); font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; color:var(--text); text-decoration:none; }
+.nav-dot { width:8px; height:8px; border-radius:50%; background:var(--bull); box-shadow:0 0 10px var(--bull); }
+.nav-right { display:flex; align-items:center; gap:8px; }
+.nav-link { font-size:13px; color:var(--text-soft); text-decoration:none; font-family:var(--mono); font-weight:500; padding:8px 14px; border-radius:6px; transition:all 0.2s; }
+.nav-link:hover { color:var(--accent); background:var(--surface2); }
+.theme-toggle { width:38px; height:38px; border-radius:8px; border:1px solid var(--border); background:var(--surface); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; }
+
+.wrap { max-width:820px; margin:0 auto; padding:120px 24px 80px; }
+.page-title { font-family:var(--display); font-size:clamp(48px,7vw,72px); letter-spacing:2px; margin-bottom:8px; }
+.page-sub { color:var(--text-soft); font-family:var(--mono); font-size:13px; margin-bottom:16px; }
+.updated { color:var(--muted); font-family:var(--mono); font-size:11px; margin-bottom:40px; }
+
+.toc { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:48px; padding:20px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+.toc a { font-family:var(--mono); font-size:12px; color:var(--accent); text-decoration:none; padding:6px 12px; border:1px solid var(--border); border-radius:6px; transition:all 0.2s; }
+.toc a:hover { background:var(--surface2); }
+
+section { margin-bottom:48px; scroll-margin-top:80px; }
+h2 { font-family:var(--display); font-size:32px; letter-spacing:1px; margin-bottom:16px; color:var(--text); padding-bottom:8px; border-bottom:2px solid var(--border); }
+h3 { font-size:17px; font-weight:600; margin:24px 0 8px; color:var(--text); }
+p { color:var(--text-soft); margin-bottom:14px; font-size:15px; }
+ul { color:var(--text-soft); margin:0 0 14px 24px; font-size:15px; }
+li { margin-bottom:8px; }
+strong { color:var(--text); }
+a.inline { color:var(--accent); text-decoration:none; }
+a.inline:hover { text-decoration:underline; }
+
+.contact-box { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px; margin-bottom:24px; }
+.contact-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; font-family:var(--mono); font-size:14px; }
+.contact-row:last-child { margin-bottom:0; }
+.contact-label { color:var(--muted); min-width:80px; font-size:12px; }
+.contact-val { color:var(--text); }
+.contact-val a { color:var(--accent); text-decoration:none; }
+
+.disclaimer-box { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:12px; padding:24px; margin-bottom:24px; }
+.disclaimer-box h3 { color:var(--gold); margin-top:0; }
+.disclaimer-box p { color:var(--text-soft); }
+
+footer { border-top:1px solid var(--border); padding:32px 40px; text-align:center; font-family:var(--mono); font-size:12px; color:var(--muted); }
+footer a { color:var(--muted); text-decoration:none; margin:0 12px; }
+footer a:hover { color:var(--accent); }
+
+@media (max-width:768px) { nav { padding:0 16px; } .nav-link { display:none; } .wrap { padding:100px 16px 60px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo"><div class="nav-dot"></div>cryp2me.ai</a>
+  <div class="nav-right">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/#pricing" class="nav-link">Pricing</a>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="page-title">LEGAL & CONTACT</h1>
+  <p class="page-sub">cryp2me.ai — operated by C50 Labs</p>
+  <p class="updated">Last updated: May 27, 2026</p>
+
+  <div class="toc">
+    <a href="#contact">Contact</a>
+    <a href="#disclaimer">Risk Disclaimer</a>
+    <a href="#terms">Terms of Service</a>
+    <a href="#privacy">Privacy Policy</a>
+    <a href="#refund">Refund Policy</a>
+  </div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>We're here to help. For support, billing questions, or general inquiries, reach out through any of the channels below.</p>
+    <div class="contact-box">
+      <div class="contact-row"><span class="contact-label">Email</span><span class="contact-val"><a href="mailto:support@cryp2me.ai">support@cryp2me.ai</a></span></div>
+      <div class="contact-row"><span class="contact-label">Operated by</span><span class="contact-val">C50 Labs</span></div>
+      <div class="contact-row"><span class="contact-label">Response</span><span class="contact-val">Within 48 hours</span></div>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <section id="disclaimer">
+    <h2>Risk Disclaimer</h2>
+    <div class="disclaimer-box">
+      <h3>⚠️ Not Financial Advice</h3>
+      <p>cryp2me.ai provides AI-generated predictions and statistical analysis for <strong>informational and educational purposes only</strong>. Nothing on this platform constitutes financial, investment, trading, or any other form of advice.</p>
+    </div>
+    <p>Cryptocurrency and asset trading carries a high level of risk and may not be suitable for all investors. The high degree of leverage and volatility can work against you as well as for you. Before deciding to trade, you should carefully consider your objectives, financial situation, needs, and level of experience.</p>
+    <h3>Key points you must understand:</h3>
+    <ul>
+      <li><strong>Predictions are probabilistic, not guarantees.</strong> Our models output statistical likelihoods based on historical patterns. Past performance does not guarantee future results.</li>
+      <li><strong>You may lose money.</strong> Never trade with funds you cannot afford to lose.</li>
+      <li><strong>Markets are unpredictable.</strong> No model, including ours, can predict markets with certainty. Directional accuracy typically ranges in the 50-56% range — a statistical edge, not a crystal ball.</li>
+      <li><strong>You are solely responsible</strong> for your own trading decisions and their outcomes.</li>
+      <li>We are <strong>not a broker, exchange, or financial institution</strong> and do not execute trades on your behalf.</li>
+    </ul>
+    <p>By using cryp2me.ai, you acknowledge that you trade entirely at your own risk and that C50 Labs bears no liability for any losses incurred.</p>
+  </section>
+
+  <!-- TERMS -->
+  <section id="terms">
+    <h2>Terms of Service</h2>
+    <h3>1. Acceptance of Terms</h3>
+    <p>By accessing or using cryp2me.ai (the "Service"), operated by C50 Labs, you agree to be bound by these Terms of Service. If you do not agree, do not use the Service.</p>
+    <h3>2. Description of Service</h3>
+    <p>cryp2me.ai provides AI-powered predictions, statistical trading signals, and market analysis tools for cryptocurrency and tokenized assets. The Service is provided on an "as is" and "as available" basis.</p>
+    <h3>3. Subscriptions & Billing</h3>
+    <p>The Service offers a free tier and a paid "Pro" subscription billed monthly ($39.99) or yearly ($335.99). Subscriptions renew automatically unless cancelled. You may cancel at any time; access continues until the end of the current billing period.</p>
+    <h3>4. Acceptable Use</h3>
+    <ul>
+      <li>You will not resell, redistribute, or scrape the Service or its data.</li>
+      <li>You will not attempt to reverse-engineer the models or infrastructure.</li>
+      <li>You will not use the Service for any unlawful purpose.</li>
+    </ul>
+    <h3>5. No Warranty</h3>
+    <p>The Service is provided without warranties of any kind, express or implied, including accuracy, reliability, or fitness for a particular purpose. We do not warrant that predictions will be accurate or profitable.</p>
+    <h3>6. Limitation of Liability</h3>
+    <p>To the maximum extent permitted by law, C50 Labs shall not be liable for any direct, indirect, incidental, or consequential damages — including financial losses from trading — arising from your use of the Service.</p>
+    <h3>7. Changes to Terms</h3>
+    <p>We may update these Terms at any time. Continued use after changes constitutes acceptance of the revised Terms.</p>
+    <h3>8. Governing Law</h3>
+    <p>These Terms are governed by the laws applicable to C50 Labs' jurisdiction of incorporation, without regard to conflict-of-law principles. Any disputes shall be resolved through good-faith negotiation, and failing that, through binding arbitration in a mutually agreed venue.</p>
+  </section>
+
+  <!-- PRIVACY -->
+  <section id="privacy">
+    <h2>Privacy Policy</h2>
+    <h3>1. Information We Collect</h3>
+    <ul>
+      <li><strong>Account data:</strong> email address when you subscribe.</li>
+      <li><strong>Payment data:</strong> processed securely by our payment processors (Stripe for cards; on-chain wallet address for crypto). We do not store full card numbers.</li>
+      <li><strong>Usage data:</strong> basic analytics such as which assets and timeframes you view, to improve the Service.</li>
+    </ul>
+    <h3>2. How We Use It</h3>
+    <p>To provide and improve the Service, process payments, send service-related communications, and comply with legal obligations.</p>
+    <h3>3. Data Sharing</h3>
+    <p>We do not sell your personal data. We share data only with service providers necessary to operate (e.g., payment processors, hosting providers) and when required by law.</p>
+    <h3>4. Market Data</h3>
+    <p>Price and market data are sourced live from third-party exchanges (e.g., Binance). We do not control or guarantee the accuracy of third-party data.</p>
+    <h3>5. Your Rights</h3>
+    <p>You may request access to, correction of, or deletion of your personal data by emailing <a class="inline" href="mailto:support@cryp2me.ai">support@cryp2me.ai</a>.</p>
+    <h3>6. Cookies & Local Storage</h3>
+    <p>We use browser local storage to maintain your session and subscription status. We do not use invasive third-party tracking cookies.</p>
+  </section>
+
+  <!-- REFUND -->
+  <section id="refund">
+    <h2>Refund Policy</h2>
+    <p>We want you to be satisfied with cryp2me.ai Pro.</p>
+    <h3>Monthly subscriptions</h3>
+    <p>If you are unsatisfied, you may request a refund within <strong>7 days</strong> of your initial purchase. After 7 days, monthly subscriptions are non-refundable, but you may cancel to prevent future charges.</p>
+    <h3>Yearly subscriptions</h3>
+    <p>Yearly plans may be refunded within <strong>14 days</strong> of purchase, prorated for any time used. After 14 days, the subscription is non-refundable but remains active until expiry.</p>
+    <h3>Crypto payments</h3>
+    <p>Due to the irreversible nature of blockchain transactions, crypto payments are refunded as account credit or, where possible, returned to the originating wallet, at our discretion.</p>
+    <h3>How to request</h3>
+    <p>Email <a class="inline" href="mailto:support@cryp2me.ai">support@cryp2me.ai</a> with your account email and reason. We process valid requests within 5-10 business days.</p>
+  </section>
+</div>
+
+<footer>
+  <div>
+    <a href="/">Home</a>
+    <a href="#contact">Contact</a>
+    <a href="#terms">Terms</a>
+    <a href="#privacy">Privacy</a>
+    <a href="#refund">Refund</a>
+  </div>
+  <div style="margin-top:16px">Not financial advice · © 2026 C50 Labs · cryp2me.ai</div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('theme-btn').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+document.getElementById('theme-btn').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+</script>
+</body>
+</html>
+
