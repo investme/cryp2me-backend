@@ -16,7 +16,7 @@ SEQ_LEN_MAP = {
     "1h": 168, "2h": 168, "1d": 90,
 }
 
-N_FEATURES = 35
+N_FEATURES = 22
 
 HORIZON_LABELS = {
     "1m":  ["T+5m",  "T+15m", "T+30m"],
@@ -234,12 +234,11 @@ def build_features_from_candles(candles, interval="1h"):
     ma20=np.convolve(c,np.ones(20)/20,mode='same')
     std20=np.array([np.std(c[max(0,i-20):i]) for i in range(n)])
     f[:,18]=np.nan_to_num(2*std20/(ma20+1e-8))
-    f[:,19]=0.25; f[:,20]=0.5; f[:,21]=0.5
     ret=np.nan_to_num(f[:,3])
     vol=np.array([np.std(ret[max(0,i-24):i+1]) for i in range(n)])
     reg=np.zeros(n,dtype=int)
     if np.any(vol>0):
         p33,p66=np.percentile(vol[vol>0],[33,66])
         reg[vol>p66]=2; reg[(vol>p33)&(vol<=p66)]=1
-    for i in range(n): f[i,31+reg[i]]=1.0
+    for i in range(n): f[i,19+reg[i]]=1.0
     return np.clip(np.nan_to_num(f,nan=0.,posinf=0.,neginf=0.),-10.,10.).astype(np.float32)
