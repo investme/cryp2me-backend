@@ -415,7 +415,7 @@ footer { border-top:1px solid var(--border); padding:40px; display:flex; align-i
           </div>
           <div class="amount-box"><span class="amount-label">Amount to send:</span><span class="amount-val" id="crypto-amount">39.99 USDT</span></div>
           <div class="qr-container"><div class="qr-placeholder"><div class="qr-grid" id="qr-grid"></div><div style="margin-top:8px;color:#666;font-size:10px">Scan to pay · Arbitrum</div></div></div>
-          <div class="wallet-address"><span class="wallet-addr-text" id="wallet-addr">YOUR_ARBITRUM_WALLET_ADDRESS_HERE</span><button class="copy-btn" onclick="copyAddress()">COPY</button></div>
+          <div class="wallet-address"><span class="wallet-addr-text" id="wallet-addr">0xf27B466d7563Adf65dD0670F0c261Bed6C7D55Fa</span><button class="copy-btn" onclick="copyAddress()">COPY</button></div>
           <div class="stripe-note" style="margin-bottom:16px">⚡ Arbitrum network — low fees · Send exact amount</div>
           <button class="crypto-confirm-btn" onclick="handleCryptoPay()">I've sent payment — Confirm</button>
         </div>
@@ -427,8 +427,8 @@ footer { border-top:1px solid var(--border); padding:40px; display:flex; align-i
 <script>
 // ===== CONFIG — update these after deploy =====
 const DASHBOARD_URL = '/app';  // ← Render backend URL goes here
-const WALLET_ADDRESS = 'YOUR_ARBITRUM_WALLET_ADDRESS_HERE';
-const STRIPE_KEY = 'pk_live_YOUR_STRIPE_KEY_HERE';
+const WALLET_ADDRESS = '0xf27B466d7563Adf65dD0670F0c261Bed6C7D55Fa';
+const STRIPE_KEY = 'pk_live_51TZBEWRsWRcsNjUuFH4REEnDeebctsW0PuQmkOnFyMMsFW90hmg8GSnsSCOzAsEnHc0aaxToV2OXtXjG9Ljj2fM700M2r6pPPv';
 
 // ===== PROMO CODES — add/remove here =====
 const PROMO_CODES = {
@@ -550,7 +550,19 @@ function selectCrypto(coin, btn){ selectedCrypto=coin; document.querySelectorAll
 function copyAddress(){ navigator.clipboard.writeText(WALLET_ADDRESS).then(()=>{ const b=document.querySelector('.copy-btn'); b.textContent='COPIED!'; setTimeout(()=>b.textContent='COPY',2000); }); }
 function formatCard(i){ let v=i.value.replace(/\D/g,'').substring(0,16); i.value=v.replace(/(.{4})/g,'$1 ').trim(); }
 function formatExpiry(i){ let v=i.value.replace(/\D/g,''); if(v.length>=2)v=v.substring(0,2)+'/'+v.substring(2,4); i.value=v; }
-function generateQR(){ const grid=document.getElementById('qr-grid'); grid.innerHTML=''; const pat=[1,1,1,0,1,1,1,1,0,0,0,0,1,0,1,0,1,0,0,1,0,1,0,1,0,0,1,0,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,1,0,1,0,1,1,0,0,1,0,0,0,0,1,0,0,1,0,0,1,0,0,1,1,0,1,0,1,0,1,0,1,0,0,1,1,0,0,0,0,0]; pat.forEach(v=>{ const c=document.createElement('div'); c.className='qr-cell'; c.style.background=v?'#000':'#fff'; grid.appendChild(c); }); }
+function generateQR(){
+  const container = document.getElementById('qr-grid');
+  container.innerHTML = '';
+  container.style.display = 'block';
+  container.style.width = '140px';
+  container.style.height = '140px';
+  const img = document.createElement('img');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=' + encodeURIComponent(WALLET_ADDRESS) + '&margin=0';
+  img.style.width = '100%';
+  img.style.height = '100%';
+  img.alt = 'Scan to pay';
+  container.appendChild(img);
+}
 
 function handleCardPay(){
   if (appliedPromoDays > 0) { grantAccess(appliedPromoDays); return; }
