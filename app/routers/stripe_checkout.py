@@ -154,3 +154,19 @@ async def stripe_webhook(request: Request, stripe_signature: Optional[str] = Hea
         logger.info(f"Stripe event: {event_type}")
 
     return {"received": True}
+
+@router.get("/stripe-diag")
+async def stripe_diag():
+    """TEMP: shows whether env vars are loaded. Remove before going live."""
+    sk = os.getenv("STRIPE_SECRET_KEY", "")
+    return {
+        "secret_key_set":      bool(sk),
+        "secret_key_prefix":   sk[:8] if sk else "",
+        "secret_key_length":   len(sk),
+        "secret_key_starts_with_sk": sk.startswith("sk_"),
+        "price_monthly":       os.getenv("STRIPE_PRICE_MONTHLY", "")[:15] + "..." if os.getenv("STRIPE_PRICE_MONTHLY") else "MISSING",
+        "price_yearly":        os.getenv("STRIPE_PRICE_YEARLY", "")[:15] + "..." if os.getenv("STRIPE_PRICE_YEARLY") else "MISSING",
+        "public_site_url":     os.getenv("PUBLIC_SITE_URL", "MISSING"),
+        "webhook_secret_set":  bool(os.getenv("STRIPE_WEBHOOK_SECRET", "")),
+        "stripe_api_key_var":  bool(stripe.api_key),
+    }
