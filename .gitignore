@@ -13,3 +13,6 @@ models/onnx/
 models/checkpoints/
 EOF
 echo "gitignore cleanded"
+# Model archives — managed via GitHub Releases, not git
+models/*.tar.gz
+models/*.zip
