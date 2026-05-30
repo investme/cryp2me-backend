@@ -171,14 +171,26 @@ async def stripe_webhook(request: Request, stripe_signature: Optional[str] = Hea
 async def stripe_diag():
     """TEMP: shows whether env vars are loaded. Remove before going live."""
     sk = os.getenv("STRIPE_SECRET_KEY", "")
+    # Sample a few other env vars to see if ANY env vars are reaching us
     return {
-        "secret_key_set":      bool(sk),
-        "secret_key_prefix":   sk[:8] if sk else "",
-        "secret_key_length":   len(sk),
-        "secret_key_starts_with_sk": sk.startswith("sk_"),
-        "price_monthly":       os.getenv("STRIPE_PRICE_MONTHLY", "")[:15] + "..." if os.getenv("STRIPE_PRICE_MONTHLY") else "MISSING",
-        "price_yearly":        os.getenv("STRIPE_PRICE_YEARLY", "")[:15] + "..." if os.getenv("STRIPE_PRICE_YEARLY") else "MISSING",
+        "stripe_secret_set":   bool(sk),
+        "stripe_secret_prefix": sk[:8] if sk else "",
+        "stripe_secret_len":   len(sk),
+        "price_monthly_set":   bool(os.getenv("STRIPE_PRICE_MONTHLY")),
+        "price_yearly_set":    bool(os.getenv("STRIPE_PRICE_YEARLY")),
         "public_site_url":     os.getenv("PUBLIC_SITE_URL", "MISSING"),
         "webhook_secret_set":  bool(os.getenv("STRIPE_WEBHOOK_SECRET", "")),
         "stripe_api_key_var":  bool(stripe.api_key),
+        # Are OTHER (non-Stripe) env vars working?
+        "cors_origins_set":    bool(os.getenv("CORS_ORIGINS")),
+        "cors_origins_value":  os.getenv("CORS_ORIGINS", "MISSING")[:40],
+        "environment":         os.getenv("ENVIRONMENT", "MISSING"),
+        "log_level":           os.getenv("LOG_LEVEL", "MISSING"),
+        "python_version":      os.getenv("PYTHON_VERSION", "MISSING"),
+        # Render-injected vars (should ALWAYS be present)
+        "render_service_id":   os.getenv("RENDER_SERVICE_ID", "MISSING"),
+        "render_service_name": os.getenv("RENDER_SERVICE_NAME", "MISSING"),
+        # Show total count of env vars visible to the process
+        "total_env_vars":      len(os.environ),
+        "stripe_env_var_names": sorted([k for k in os.environ.keys() if "STRIPE" in k or "PUBLIC" in k or "CORS" in k]),
     }
