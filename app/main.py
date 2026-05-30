@@ -7,6 +7,7 @@ import logging
 from app.config import settings
 from app.routers import chart_router, search_router, predict_router
 from app.routers.backtest import router as backtest_router
+from app.routers.stripe_checkout import router as stripe_router
 from app.state import engine
 
 logging.basicConfig(level=settings.log_level.upper())
@@ -44,6 +45,7 @@ app.include_router(chart_router,   prefix="/api")
 app.include_router(search_router,  prefix="/api")
 app.include_router(predict_router,  prefix="/api")
 app.include_router(backtest_router, prefix="/api")
+app.include_router(stripe_router)  # already has /api prefix
 
 
 @app.get("/api/health")

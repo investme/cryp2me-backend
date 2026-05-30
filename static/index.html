@@ -396,15 +396,10 @@ footer { border-top:1px solid var(--border); padding:40px; display:flex; align-i
         <div class="promo-msg" id="promo-msg"></div>
 
         <div class="payment-card active" id="tab-card">
-          <div class="form-group"><label class="form-label">EMAIL</label><input type="email" class="form-input" placeholder="you@example.com" id="card-email"></div>
-          <div class="form-group"><label class="form-label">CARD NUMBER</label><input type="text" class="form-input" placeholder="4242 4242 4242 4242" maxlength="19" id="card-num" oninput="formatCard(this)"></div>
-          <div class="form-row">
-            <div class="form-group"><label class="form-label">EXPIRY</label><input type="text" class="form-input" placeholder="MM/YY" maxlength="5" id="card-exp" oninput="formatExpiry(this)"></div>
-            <div class="form-group"><label class="form-label">CVC</label><input type="text" class="form-input" placeholder="123" maxlength="4" id="card-cvc"></div>
-          </div>
-          <div class="stripe-note">🔒 Secured by <a href="https://stripe.com" target="_blank">Stripe</a></div>
+          <div class="form-group"><label class="form-label">EMAIL</label><input type="email" class="form-input" placeholder="you@example.com" id="card-email" required></div>
+          <div class="stripe-note">🔒 You'll be redirected to <a href="https://stripe.com" target="_blank">Stripe</a> to complete payment securely. Cards · Apple Pay · Google Pay supported.</div>
           <br>
-          <button class="pay-btn" id="card-pay-btn" onclick="handleCardPay()">Pay $39.99 / month</button>
+          <button class="pay-btn" id="card-pay-btn" onclick="handleCardPay()">Continue to Checkout — $39.99 / month</button>
         </div>
 
         <div class="payment-crypto" id="tab-crypto">
@@ -501,7 +496,7 @@ function toggleBilling() {
   document.getElementById('price-dec').textContent = p.dec;
   document.getElementById('price-period').textContent = p.period;
   document.getElementById('modal-price-tag').textContent = p.tag;
-  document.getElementById('card-pay-btn').textContent = 'Pay ' + p.tag;
+  document.getElementById('card-pay-btn').textContent = 'Continue to Checkout — ' + p.tag;
   document.getElementById('crypto-amount').textContent = p.amount + ' ' + selectedCrypto;
 }
 
@@ -564,13 +559,33 @@ function generateQR(){
   container.appendChild(img);
 }
 
-function handleCardPay(){
+async function handleCardPay(){
+  // Promo code path — skip Stripe entirely
   if (appliedPromoDays > 0) { grantAccess(appliedPromoDays); return; }
-  const email=document.getElementById('card-email').value, num=document.getElementById('card-num').value, exp=document.getElementById('card-exp').value, cvc=document.getElementById('card-cvc').value;
-  if(!email||!num||!exp||!cvc){ alert('Please fill in all fields'); return; }
-  const btn=document.getElementById('card-pay-btn'); btn.disabled=true; btn.textContent='Processing...';
-  // TODO: real Stripe integration
-  setTimeout(()=>grantAccess(billingYearly?365:30), 1500);
+  const email = document.getElementById('card-email').value.trim();
+  if (!email) { alert('Please enter your email so we can send your receipt'); return; }
+  const btn = document.getElementById('card-pay-btn');
+  btn.disabled = true;
+  btn.textContent = 'Redirecting to Stripe...';
+  try {
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ plan: billingYearly ? 'yearly' : 'monthly', email: email })
+    });
+    if (!resp.ok) {
+      const err = await resp.text();
+      throw new Error('Checkout error: ' + err);
+    }
+    const data = await resp.json();
+    if (!data.url) throw new Error('No checkout URL returned');
+    // Redirect to Stripe's hosted checkout page
+    window.location.href = data.url;
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = billingYearly ? 'Pay $335.99 / year' : 'Pay $39.99 / month';
+    alert('Payment error: ' + e.message + '\n\nPlease try again or use crypto/promo code.');
+  }
 }
 function handleCryptoPay(){
   if (appliedPromoDays > 0) { grantAccess(appliedPromoDays); return; }

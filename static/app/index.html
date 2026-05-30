@@ -969,5 +969,40 @@ window.onload = async () => {
   <span id="upsell-text">🔒 This is a Pro feature</span>
   <a href="/#pricing">Upgrade to Pro →</a>
 </div>
+
+<!-- cryp2me.ai: Stripe checkout return handler -->
+<script>
+(async function handleStripeReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('checkout') !== 'success') return;
+  const sessionId = params.get('session_id');
+  if (!sessionId) return;
+  try {
+    const resp = await fetch('/api/verify-session/' + encodeURIComponent(sessionId));
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data.paid && data.subscription_active) {
+      const days = data.plan === 'yearly' ? 365 : 30;
+      const until = Date.now() + days * 24 * 60 * 60 * 1000;
+      try {
+        localStorage.setItem('cryp2me_pro', 'true');
+        localStorage.setItem('cryp2me_pro_until', until);
+        if (data.customer_email) localStorage.setItem('cryp2me_email', data.customer_email);
+      } catch (e) {}
+      // Show a one-time success message
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#00b87a;color:#fff;padding:14px 24px;border-radius:10px;font-family:monospace;box-shadow:0 8px 30px rgba(0,184,122,0.4);font-weight:700';
+      banner.textContent = '✓ Pro activated! Welcome to cryp2me.ai';
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 5000);
+    }
+    // Clean the URL so refreshing doesn't re-trigger
+    history.replaceState({}, document.title, '/app');
+  } catch (e) {
+    console.error('Checkout verification failed', e);
+  }
+})();
+</script>
+
 </body>
 </html>
