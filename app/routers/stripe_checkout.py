@@ -24,7 +24,17 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["stripe"])
 
 # ─── Config from env (fail loud if missing in production) ──────────────────
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY", "")
+# Note: don't set stripe.api_key at import; do it per-request
+_DEFAULT_SK = os.getenv("STRIPE_SECRET_KEY", "")
+if _DEFAULT_SK:
+    stripe.api_key = _DEFAULT_SK
+
+def _ensure_stripe_key():
+    """Re-read env each time, in case import-time read was empty."""
+    key = os.getenv("STRIPE_SECRET_KEY", "")
+    if key:
+        stripe.api_key = key
+    return key
 WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 PRICE_MONTHLY  = os.getenv("STRIPE_PRICE_MONTHLY", "price_1TcbHVRsWRcsNjUuBLHCii7q")
 PRICE_YEARLY   = os.getenv("STRIPE_PRICE_YEARLY",  "price_1TcbKPRsWRcsNjUuqM8Zx5B6")
@@ -38,8 +48,9 @@ async def create_checkout_session(request: Request):
     Returns: { "url": "https://checkout.stripe.com/..." }
     Frontend redirects the user to this URL.
     """
-    if not stripe.api_key:
-        raise HTTPException(500, "Stripe not configured on the server")
+    key = _ensure_stripe_key()
+    if not key:
+        raise HTTPException(500, "Stripe not configured on the server (env STRIPE_SECRET_KEY missing)")
 
     try:
         body = await request.json()
@@ -78,7 +89,8 @@ async def verify_session(session_id: str):
     Frontend calls this after returning from Stripe success_url
     to confirm the session is paid and grant Pro access locally.
     """
-    if not stripe.api_key:
+    key = _ensure_stripe_key()
+    if not key:
         raise HTTPException(500, "Stripe not configured")
 
     try:
