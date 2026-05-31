@@ -207,6 +207,268 @@ body.trendline-mode .trendline-hint { display:block; }
 
 @media (max-width:1100px) { .app { grid-template-columns:180px 1fr 260px; } }
 @media (max-width:800px) { .sidebar { display:none; } .app { grid-template-columns:1fr 260px; } }
+
+/* === MOBILE PATCH v2 === */
+/* Hamburger button — hidden by default, shown on small screens */
+.menu-btn {
+  display: none;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.menu-btn:active { background: var(--bg4); }
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 998;
+}
+.sidebar-backdrop.open { display: block; }
+
+/* ─── TABLETS & MOBILE (≤ 1024px): wrap the topbar onto 2 rows ─── */
+@media (max-width: 1024px) {
+  .chart-topbar {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    min-height: 56px;
+    padding: 8px 12px !important;
+    gap: 8px !important;
+    align-items: center;
+  }
+  /* Row 1: ticker info takes full width */
+  .ticker-display {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  /* Row 2: controls take full width and scroll horizontally */
+  .topbar-controls {
+    width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    flex-wrap: nowrap !important;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .topbar-controls::-webkit-scrollbar { display: none; }
+  .topbar-controls > * { flex-shrink: 0; }
+}
+
+/* ─── MOBILE (≤ 768px): drawer sidebar, stacked layout ─── */
+@media (max-width: 768px) {
+  /* Hamburger appears */
+  .menu-btn { display: inline-flex; }
+
+  /* App becomes vertical stack */
+  .app {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    height: calc(100vh - 0px);
+  }
+
+  /* Sidebar = slide-in drawer */
+  .sidebar {
+    display: flex !important;
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    width: 82%;
+    max-width: 320px;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Chart section full width */
+  .chart-section { width: 100%; min-width: 0; flex: 1; }
+
+  /* Logo shrinks a bit */
+  .logo { font-size: 14px; gap: 6px; }
+  .logo img { height: 28px !important; }
+  .live-badge { font-size: 9px; padding: 4px 8px; }
+  #last-update { display: none; }
+
+  /* Buttons get touch-friendly */
+  .tf-btn, .tool-btn {
+    min-height: 36px;
+    min-width: 44px;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  /* Pred panel stacks below */
+  .pred-panel {
+    width: 100%;
+    border-left: none !important;
+    border-top: 1px solid var(--border);
+    max-height: 50vh;
+  }
+
+  .charts-wrapper { padding: 6px; gap: 4px; }
+  .sub-charts { grid-template-columns: 1fr !important; min-height: 80px; }
+
+  /* Ticker display compact */
+  .ticker-display { gap: 8px; }
+  .ticker-info h2 { font-size: 14px; }
+  .ticker-price { font-size: 18px; }
+}
+
+/* Tiny phones */
+@media (max-width: 380px) {
+  .chart-topbar { padding: 6px 8px !important; }
+  .logo { font-size: 12px; }
+  .logo img { height: 24px !important; }
+  .logo span { font-size: 9px !important; }
+  .tf-btn, .tool-btn { font-size: 11px; padding: 5px 8px; min-width: 40px; }
+  .ticker-price { font-size: 16px; }
+}
+/* === END MOBILE PATCH v2 === */
+
+
+
+/* === MOBILE PATCH v1 === */
+/* Hamburger button — hidden on desktop, shown on mobile */
+.menu-btn {
+  display: none;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.menu-btn:active { background: var(--bg4); }
+
+/* Backdrop behind the open drawer */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 998;
+}
+.sidebar-backdrop.open { display: block; }
+
+@media (max-width: 768px) {
+  /* Show hamburger, place it left of the logo */
+  .menu-btn { display: inline-flex; }
+
+  /* App becomes a single column: chart-section only.
+     Sidebar overlays as a drawer; pred-panel stacks below chart. */
+  .app {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr;
+    position: relative;
+  }
+
+  /* Sidebar = slide-in drawer */
+  .sidebar {
+    display: flex !important;          /* override the <800 hide */
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    width: 82%;
+    max-width: 320px;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  /* Chart section takes the full screen width */
+  .chart-section {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  /* Chart topbar: 2 rows. Row 1 = logo + asset + price.
+     Row 2 = horizontally scrollable timeframe & indicator buttons. */
+  .chart-topbar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 56px;
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .topbar-controls {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+  }
+  .topbar-controls::-webkit-scrollbar { display: none; }
+
+  /* Touch-friendly buttons */
+  .tf-btn, .ind-btn, .topbar-controls button {
+    min-height: 36px;
+    min-width: 44px;
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  /* Header logo: shrink slightly so it fits with the hamburger */
+  .logo { font-size: 14px; gap: 6px; }
+  .logo img { height: 28px !important; }
+
+  /* Live badge: trim for mobile */
+  .live-badge { font-size: 9px; padding: 4px 8px; }
+  #last-update { display: none; }   /* hide clock to save room */
+
+  /* Prediction panel: stack BELOW the chart instead of beside it */
+  .pred-panel {
+    border-left: none !important;
+    border-top: 1px solid var(--border);
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
+  /* Make chart and sub-charts honor mobile heights */
+  .charts-wrapper { padding: 6px; gap: 4px; }
+  .sub-charts {
+    grid-template-columns: 1fr;
+    min-height: 80px;
+  }
+
+  /* App container becomes a vertical stack on mobile */
+  .app {
+    display: flex !important;
+    flex-direction: column;
+    height: calc(100vh - 0px);
+  }
+
+  /* Bitcoin selected-asset row above the chart */
+  .selected-asset-row, .asset-header {
+    flex-wrap: wrap;
+  }
+}
+
+/* Tiny phones */
+@media (max-width: 380px) {
+  .chart-topbar { padding: 6px 8px; }
+  .logo { font-size: 12px; }
+  .logo img { height: 24px !important; }
+  .logo span { font-size: 9px !important; }
+  .tf-btn, .ind-btn { font-size: 11px; padding: 5px 8px; min-width: 40px; }
+}
+/* === END MOBILE PATCH v1 === */
+
 </style>
 </head>
 <body>
@@ -238,6 +500,7 @@ body.trendline-mode .trendline-hint { display:block; }
   <div class="chart-section">
     <div class="gold-banner" id="gold-banner">🥇 PAXG — Pax Gold · 1 token = 1 troy oz · Live Binance price</div>
     <div class="chart-topbar">
+      <button class="menu-btn" id="menu-btn" aria-label="Open assets menu" onclick="toggleSidebar()">☰</button>
       <div class="ticker-display">
         <div class="ticker-icon" id="ticker-icon">BTC</div>
         <div class="ticker-info">
