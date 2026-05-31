@@ -338,35 +338,9 @@ body.trendline-mode .trendline-hint { display:block; }
 
 /* === MOBILE PATCH v1 === */
 /* Hamburger button — hidden on desktop, shown on mobile */
-.menu-btn {
-  display: none;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  color: var(--text);
-  width: 40px; height: 40px;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.menu-btn:active { background: var(--bg4); }
-
 /* Backdrop behind the open drawer */
-.sidebar-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  z-index: 998;
-}
-.sidebar-backdrop.open { display: block; }
-
 @media (max-width: 768px) {
   /* Show hamburger, place it left of the logo */
-  .menu-btn { display: inline-flex; }
-
   /* App becomes a single column: chart-section only.
      Sidebar overlays as a drawer; pred-panel stacks below chart. */
   .app {
@@ -1265,6 +1239,26 @@ window.onload = async () => {
     console.error('Checkout verification failed', e);
   }
 })();
+</script>
+
+
+<!-- mobile sidebar drawer backdrop & toggle -->
+<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
+<script>
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  const bd = document.getElementById('sidebar-backdrop');
+  if (!sb || !bd) return;
+  sb.classList.toggle('open'); bd.classList.toggle('open');
+}
+function closeSidebar() {
+  document.querySelector('.sidebar')?.classList.remove('open');
+  document.getElementById('sidebar-backdrop')?.classList.remove('open');
+}
+document.addEventListener('click', (e) => {
+  const item = e.target.closest('.asset-item');
+  if (item && window.matchMedia('(max-width: 768px)').matches) closeSidebar();
+}, true);
 </script>
 
 </body>
