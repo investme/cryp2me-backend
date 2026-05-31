@@ -315,6 +315,7 @@ body.trendline-mode .trendline-hint { display:block; }
   }
 
   .charts-wrapper { padding: 6px; gap: 4px; }
+  #main-chart { min-height: 340px !important; height: 340px !important; }
   .sub-charts { grid-template-columns: 1fr !important; min-height: 80px; }
 
   /* Ticker display compact */
@@ -1259,6 +1260,35 @@ document.addEventListener('click', (e) => {
   const item = e.target.closest('.asset-item');
   if (item && window.matchMedia('(max-width: 768px)').matches) closeSidebar();
 }, true);
+</script>
+
+
+<!-- mobile: force chart resize on orientation/visibility change -->
+<script>
+(function(){
+  function forceChartResize() {
+    if (typeof mainChart !== 'undefined' && mainChart && mainChart.timeScale) {
+      try {
+        const el = document.getElementById('main-chart');
+        if (el) {
+          mainChart.resize(el.clientWidth, el.clientHeight);
+          mainChart.timeScale().fitContent();
+        }
+      } catch(e){}
+    }
+    if (typeof rsiChart !== 'undefined' && rsiChart && rsiChart.resize) {
+      try { const el = document.getElementById('rsi-chart'); rsiChart.resize(el.clientWidth, el.clientHeight); } catch(e){}
+    }
+    if (typeof macdChart !== 'undefined' && macdChart && macdChart.resize) {
+      try { const el = document.getElementById('macd-chart'); macdChart.resize(el.clientWidth, el.clientHeight); } catch(e){}
+    }
+  }
+  window.addEventListener('resize', forceChartResize);
+  window.addEventListener('orientationchange', () => setTimeout(forceChartResize, 200));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(forceChartResize, 100); });
+  // Initial nudge after page settles
+  window.addEventListener('load', () => setTimeout(forceChartResize, 500));
+})();
 </script>
 
 </body>
