@@ -209,22 +209,6 @@ body.trendline-mode .trendline-hint { display:block; }
 @media (max-width:800px) { .sidebar { display:none; } .app { grid-template-columns:1fr 260px; } }
 
 /* === MOBILE PATCH v2 === */
-/* Prevent horizontal page overflow on mobile (iOS Safari + Android Chrome) */
-@media (max-width: 1024px) {
-  html, body { overflow-x: hidden !important; max-width: 100vw !important; }
-  .app, .chart-section, .chart-topbar, .charts-wrapper, .pred-panel {
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-  }
-  /* But the timeframe pills strip IS supposed to scroll horizontally */
-  .topbar-controls { overflow-x: auto !important; }
-  /* Charts library can sometimes overflow — force its containers */
-  #main-chart, #rsi-chart, #macd-chart {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
-  }
-}
 
 /* Hamburger button — hidden by default, shown on small screens */
 .menu-btn {
@@ -460,6 +444,15 @@ body.trendline-mode .trendline-hint { display:block; }
   .tf-btn, .ind-btn { font-size: 11px; padding: 5px 8px; min-width: 40px; }
 }
 /* === END MOBILE PATCH v1 === */
+
+
+/* MINIMAL OVERFLOW + SCROLL-START FIX */
+@media (max-width: 1024px) {
+  /* Only stop the body from horizontal scroll — let children size naturally */
+  body { overflow-x: hidden; }
+  /* Make pills strip start scrolled to the LEFT (showing 1M first, not EMA20) */
+  .topbar-controls { scroll-snap-type: none; }
+}
 
 </style>
 </head>
@@ -1305,6 +1298,23 @@ document.addEventListener('click', (e) => {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(forceChartResize, 100); });
   // Initial nudge after page settles
   window.addEventListener('load', () => setTimeout(forceChartResize, 500));
+})();
+</script>
+
+
+<script>
+(function pillScrollReset(){
+  // On mobile, the active timeframe (1H) sometimes makes the pill strip auto-scroll
+  // to keep the active pill in view, which pushes 1M/5M/15M off the left.
+  // Reset the scroll to the start.
+  function resetPills(){
+    const strip = document.querySelector('.topbar-controls');
+    if (strip && window.innerWidth <= 1024) {
+      strip.scrollLeft = 0;
+    }
+  }
+  window.addEventListener('load', () => setTimeout(resetPills, 100));
+  window.addEventListener('orientationchange', () => setTimeout(resetPills, 300));
 })();
 </script>
 
