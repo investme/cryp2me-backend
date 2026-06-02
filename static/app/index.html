@@ -316,7 +316,6 @@ body.trendline-mode .trendline-hint { display:block; }
   }
 
   .charts-wrapper { padding: 6px; gap: 4px; }
-  #main-chart { min-height: 340px !important; height: 340px !important; }
   .sub-charts { grid-template-columns: 1fr !important; min-height: 80px; }
 
   /* Ticker display compact */
@@ -446,7 +445,6 @@ body.trendline-mode .trendline-hint { display:block; }
 /* === END MOBILE PATCH v1 === */
 
 
-/* MINIMAL OVERFLOW + SCROLL-START FIX */
 @media (max-width: 1024px) {
   /* Only stop the body from horizontal scroll — let children size naturally */
   body { overflow-x: hidden; }
@@ -1273,50 +1271,6 @@ document.addEventListener('click', (e) => {
 </script>
 
 
-<!-- mobile: force chart resize on orientation/visibility change -->
-<script>
-(function(){
-  function forceChartResize() {
-    if (typeof mainChart !== 'undefined' && mainChart && mainChart.timeScale) {
-      try {
-        const el = document.getElementById('main-chart');
-        if (el) {
-          mainChart.resize(el.clientWidth, el.clientHeight);
-          mainChart.timeScale().fitContent();
-        }
-      } catch(e){}
-    }
-    if (typeof rsiChart !== 'undefined' && rsiChart && rsiChart.resize) {
-      try { const el = document.getElementById('rsi-chart'); rsiChart.resize(el.clientWidth, el.clientHeight); } catch(e){}
-    }
-    if (typeof macdChart !== 'undefined' && macdChart && macdChart.resize) {
-      try { const el = document.getElementById('macd-chart'); macdChart.resize(el.clientWidth, el.clientHeight); } catch(e){}
-    }
-  }
-  window.addEventListener('resize', forceChartResize);
-  window.addEventListener('orientationchange', () => setTimeout(forceChartResize, 200));
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) setTimeout(forceChartResize, 100); });
-  // Initial nudge after page settles
-  window.addEventListener('load', () => setTimeout(forceChartResize, 500));
-})();
-</script>
-
-
-<script>
-(function pillScrollReset(){
-  // On mobile, the active timeframe (1H) sometimes makes the pill strip auto-scroll
-  // to keep the active pill in view, which pushes 1M/5M/15M off the left.
-  // Reset the scroll to the start.
-  function resetPills(){
-    const strip = document.querySelector('.topbar-controls');
-    if (strip && window.innerWidth <= 1024) {
-      strip.scrollLeft = 0;
-    }
-  }
-  window.addEventListener('load', () => setTimeout(resetPills, 100));
-  window.addEventListener('orientationchange', () => setTimeout(resetPills, 300));
-})();
-</script>
 
 </body>
 </html>
