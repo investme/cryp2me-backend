@@ -737,6 +737,12 @@ function initCharts() {
     upColor:'#00d49a', downColor:'#ff4d6a',
     borderUpColor:'#00d49a', borderDownColor:'#ff4d6a',
     wickUpColor:'#00d49a', wickDownColor:'#ff4d6a',
+    // Current-price horizontal line + label (the dashed "now" line on real trading apps)
+    priceLineVisible: true,
+    priceLineWidth: 1,
+    priceLineColor: '#00d49a',
+    priceLineStyle: LightweightCharts.LineStyle.Dashed,
+    lastValueVisible: true,
   });
   ema10S = mainChart.addLineSeries({color:'#f472b6', lineWidth:1, lastValueVisible:false, priceLineVisible:false});
   ema20S = mainChart.addLineSeries({color:'#fb923c', lineWidth:1, lastValueVisible:false, priceLineVisible:false});
