@@ -727,16 +727,36 @@ function initCharts() {
     layout:{ background:{color:'transparent'}, textColor:'#64748b' },
     grid:{ vertLines:{color:'rgba(255,255,255,0.04)'}, horzLines:{color:'rgba(255,255,255,0.04)'} },
     crosshair:{ mode: LightweightCharts.CrosshairMode.Normal },
-    rightPriceScale:{ borderColor:'rgba(255,255,255,0.07)' },
-    timeScale:{ borderColor:'rgba(255,255,255,0.07)', timeVisible:true, secondsVisible:false },
+    rightPriceScale:{
+      borderColor:'rgba(255,255,255,0.07)',
+      scaleMargins:{top:0.08, bottom:0.12},
+      entireTextOnly:true,
+      ticksVisible:true,
+    },
+    timeScale:{
+      borderColor:'rgba(255,255,255,0.07)',
+      timeVisible:true,
+      secondsVisible:false,
+      barSpacing:7,          // candle thickness (was default 6)
+      rightOffset:6,         // empty space right of latest candle
+      fixLeftEdge:false,
+      fixRightEdge:false,
+      lockVisibleTimeRangeOnResize:false,
+    },
     ...extra
   });
 
   mainChart = LightweightCharts.createChart(document.getElementById('main-chart'), opts());
   candleSeries = mainChart.addCandlestickSeries({
-    upColor:'#00d49a', downColor:'#ff4d6a',
-    borderUpColor:'#00d49a', borderDownColor:'#ff4d6a',
-    wickUpColor:'#00d49a', wickDownColor:'#ff4d6a',
+    upColor:'#26d782', downColor:'#ff4f6f',
+    borderUpColor:'#26d782', borderDownColor:'#ff4f6f',
+    wickUpColor:'#26d782', wickDownColor:'#ff4f6f',
+    // Investing.com-style: dashed horizontal line at current price + price tag
+    priceLineVisible: true,
+    priceLineWidth: 1,
+    priceLineStyle: 2,   // 2 = Dashed
+    lastValueVisible: true,
+    priceFormat: { type: 'price', precision: 2, minMove: 0.01 },
   });
   ema10S = mainChart.addLineSeries({color:'#f472b6', lineWidth:1, lastValueVisible:false, priceLineVisible:false});
   ema20S = mainChart.addLineSeries({color:'#fb923c', lineWidth:1, lastValueVisible:false, priceLineVisible:false});
@@ -1063,6 +1083,8 @@ async function loadChart() {
     const candles = data.candles || [];
     if (candles.length) {
       candleSeries.setData(candles.map(c=>({time:c.time,open:c.open,high:c.high,low:c.low,close:c.close})));
+      // Auto-scroll to latest candle so user sees current price action immediately
+      try { mainChart.timeScale().scrollToRealTime(); } catch(e) {}
     }
     const ind = data.indicators || {};
     if (ind.ema10) ema10S.setData(ind.ema10.map(p=>({time:p.time,value:p.value})));
